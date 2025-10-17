@@ -65,6 +65,7 @@ import com.google.android.material.navigation.NavigationView;
 import org.libreoffice.androidapp.R;
 import org.libreoffice.androidlib.LOActivity;
 import org.libreoffice.androidlib.LOActivityLauncher;
+import org.libreoffice.androidlib.utils.UtilsOffice;
 
 import java.io.FileFilter;
 import java.io.FilenameFilter;

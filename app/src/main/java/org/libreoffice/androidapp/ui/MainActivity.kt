@@ -4,33 +4,26 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.libreoffice.androidapp.R
-import org.libreoffice.androidapp.ui.UtilsOffice.open
+import org.libreoffice.androidapp.databinding.ActivityMainBinding
+import org.libreoffice.androidlib.utils.*
 
 class MainActivity : AppCompatActivity() {
-    private var uriEditText: EditText? = null
-    private var submitButton: Button? = null
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        // Ánh xạ các view từ layout XML
-        uriEditText = findViewById<EditText>(R.id.uriEditText)
-        submitButton = findViewById<Button>(R.id.submitButton)
-
-        // Thiết lập sự kiện cho nút Submit
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setupSubmitButton()
     }
 
     private fun setupSubmitButton() {
-        submitButton!!.setOnClickListener(object : View.OnClickListener {
+        binding.submitButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                val uriString = uriEditText!!.getText().toString().trim { it <= ' ' }
+                val uriString = binding.uriEditText.text.toString().trim()
 
                 if (uriString.isEmpty()) {
                     Toast.makeText(this@MainActivity, "Vui lòng nhập URI!", Toast.LENGTH_SHORT)
@@ -40,9 +33,7 @@ class MainActivity : AppCompatActivity() {
 
                 try {
                     val uri = Uri.parse(uriString)
-
-                    // Gọi UtilsOffice.open() để mở file
-                    open(this@MainActivity, uri)
+                    UtilsOffice.open(this@MainActivity, uri)
                 } catch (e: Exception) {
                     Toast.makeText(
                         this@MainActivity,

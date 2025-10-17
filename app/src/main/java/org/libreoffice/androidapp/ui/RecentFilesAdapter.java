@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.libreoffice.androidapp.R;
+import org.libreoffice.androidlib.utils.UtilsOffice;
 
 import java.util.ArrayList;
 import java.util.List;
