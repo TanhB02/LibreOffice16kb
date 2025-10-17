@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns="http://openoffice.org/extensions/description/2006" xmlns:d="http://openoffice.org/extensions/description/2006"  xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <version value="2.8" />
+  <identifier value="spanish.es.dicts.from.rla-es"/>
+
+  <display-name>
+      <name lang="es">Corrector ortográfico, separación de sílabas y diccionario de sinónimos para el español (todas las variantes).</name>
+        <name lang="ar">قاموس الإملاء وقواعد الواصلة والمترادفات لكل تنويعات الإسبانية.</name>
+        <name lang="cs">Slovník kontroly pravopisu, dělení slov a slovník synonym pro všechny varianty španělštiny</name>
+        <name lang="da">Spansk stavekontrol, orddelingsregler og synonymordbog for alle varianter af spansk.</name>
+        <name lang="de">Spanisches Wörterbuch (alle Varianten) für Rechtschreibprüfung, Silbentrennung und Thesaurus</name>
+        <name lang="el">Ισπανικό ορθογραφικό λεξικό, κανόνες συλλαβισμού και θησαυρός για όλες τις διαλέκτους των ισπανικών.</name>
+        <name lang="es">Español (todas las variantes): corrector ortográfico, sinónimos y reglas de silabación</name>
+        <name lang="fr">Dictionnaire orthographique espagnol, règles de césure et dictionnaire des synonymes pour toutes les variantes de l'espagnol.</name>
+        <name lang="hr">Španjolski rječnik za računalnu provjeru pravopisa, pravila za rastavljanje riječi i rječnik sinonima svih inačica španjolskoga jezika.</name>
+        <name lang="hu">Spanyol helyesírási szótár, elválasztási szabályok és szinonimaszótár minden spanyol nyelvváltozat számára</name>
+        <name lang="it">Dizionario ortografico, dei sinonimi e regole di sillabazione per tutte le varianti dello spagnolo</name>
+        <name lang="ja">スペイン語スペル辞書、ハイフネーション規則とすべてのバリエーションの類義語辞典。</name>
+        <name lang="ko">스페인어의 모든 변형에 대한 스페인어 맞춤법 사전, 하이픈 넣기 규칙, 동의어 사전입니다.</name>
+        <name lang="nb">Spansk staveing og bindestreks regler for alle varianter av Spansk</name>
+        <name lang="nl">Spaans spellingswoordenboek, woordafbrekingsregels en thesaurus voor alle varianten van het Spaans.</name>
+        <name lang="pl">Hiszpański słownik ortograficzny, reguły dzielenia wyrazów i słownik wyrazów bliskoznacznych dla wszystkich odmian hiszpańskiego</name>
+        <name lang="pt-BR">Dicionário ortográfico, regras de hifenização e tesauro para todas as variantes de espanhol</name>
+        <name lang="sk">Španielsky slovník na kontrolu pravopisu, delenie slov a tezaurus pre všetky varianty španielčiny</name>
+        <name lang="sl">Španski jezik (vse variante) – slovar za preverjanje črkovanja, vzorci za deljenje besed in slovar sopomenk</name>
+        <name lang="sv">Spansk stavningskontroll, avstavningsregler och synonymordbok för alla varianter av spanska.</name>
+        <name lang="tr">Bütün İspanyolca varyantları için imla sözlüğü, heceleme kuralları ve eş anlamlılar sözlüğü</name>
+        <name lang="zh-CN">西班牙语拼写词典、断词规则与同义词典，适用于各地区不同形式的西班牙语</name>
+        <name lang="zh-TW">適用所有西班牙語變體的西班牙文拼寫詞典、斷字與禁忌規則、同義詞庫。</name>
+      <name lang="en-US">Spanish spelling dictionary, hyphenation rules, and thesaurus for all variants of Spanish.</name>
+  </display-name>
+
+  <platform value="all" />
+
+  <dependencies>
+      <OpenOffice.org-minimal-version value="3.0" d:name="OpenOffice.org 3.0" />
+  </dependencies>
+
+  <publisher>
+      <name xlink:href="https://github.com/sbosio/rla-es" lang="es">Recursos Lingüísticos Abiertos del español (RLA-ES)</name>
+      <name xlink:href="https://github.com/sbosio/rla-es" lang="en">Open language resources for Spanish (RLA-ES)</name>
+  </publisher>
+  <icon>
+    <default xlink:href="RLA-ES.png" />
+  </icon>
+</description>

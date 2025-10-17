@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns="http://openoffice.org/extensions/description/2006" xmlns:d="http://openoffice.org/extensions/description/2006"  xmlns:xlink="http://www.w3.org/1999/xlink">
+    <version value="7.0" />
+    <identifier value="French.linguistic.resources.from.Dicollecte.by.OlivierR" />
+    <display-name>
+        <name lang="en-US">French spelling dictionary, hyphenation rules, and thesaurus</name>
+        <name lang="ar">قاموس الإملاء وقواعد الواصلة والمترادفات للُّغة الفرنسية</name>
+        <name lang="cs">Slovník kontroly pravopisu, dělení slov a slovník synonym pro francouzštinu</name>
+        <name lang="da">Fransk stavekontrol, orddelingsregler og synonymordbog</name>
+        <name lang="de">Französisches Wörterbuch für Rechtschreibprüfung, Silbentrennung und Thesaurus</name>
+        <name lang="el">Γαλλικό ορθογραφικό λεξικό, συλλαβισμός και θησαυρός</name>
+        <name lang="es">Francés: corrector ortográfico, sinónimos y reglas de silabación</name>
+        <name lang="fr">Dictionnaires orthographique, des synonymes et règles de coupure des mots français</name>
+        <name lang="hr">Provjera pravopisa, rastavljanje riječi i rječnik sinonima francuskog jezika</name>
+        <name lang="hu">Francia helyesírási szótár, elválasztási szabályok és szinonimaszótár</name>
+        <name lang="it">Dizionario ortografico francese, regole di sillabazione e dizionario di sinonimi</name>
+        <name lang="ja">フランス語スペル辞書、ハイフネーション規則と類義語辞典</name>
+        <name lang="ko">프랑스어 맞춤법 사전, 하이픈 규칙 및 동의어 사전</name>
+        <name lang="nb">Fransk stavekontroll, orddeling og synonymordbok</name>
+        <name lang="nl">Frans spelling woordenboek, woordafbrekingsregels en thesaurus</name>
+        <name lang="pl">Francuski słownik ortograficzny, reguły dzielenia wyrazów i słownik wyrazów bliskoznacznych</name>
+        <name lang="pt-BR">Dicionário ortográfico, sinônimos e regras de hifenização em francês</name>
+        <name lang="sk">Francúzsky slovník na kontrolu pravopisu, pravidlá na delenie slov tezaurus</name>
+        <name lang="sl">Francoski jezik – slovar za preverjanje črkovanja, vzorci za deljenje besed in slovar sopomenk</name>
+        <name lang="sv">Stavningsordlista, avstavningsregler och synonymordlista på franska</name>
+        <name lang="tr">Fransızca imla sözlüğü, heceleme kuralları ve eş anlamlılar</name>
+        <name lang="zh-CN">法语拼写词典、断词规则与同义词库</name>
+        <name lang="zh-TW">法文拼寫詞典、斷字與禁忌規則、同義詞庫</name>
+    </display-name>
+    <platform value="all" />
+    <dependencies>
+        <OpenOffice.org-minimal-version value="3.2" d:name="OpenOffice.org 3.2" />
+    </dependencies>
+    <icon>
+        <default xlink:href="icon.png" />
+    </icon>
+    <publisher>
+        <name xlink:href="http://www.dicollecte.org/" lang="fr">Dicollecte</name>
+    </publisher>
+</description>

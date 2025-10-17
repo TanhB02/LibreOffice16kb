@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns="http://openoffice.org/extensions/description/2006" xmlns:d="http://openoffice.org/extensions/description/2006"  xmlns:xlink="http://www.w3.org/1999/xlink">
+    <version value="3.3.0" />
+    <identifier value="brazilian.portuguese.reform1990-dictionary.from.vero.by.raimundomoura" />
+    <display-name>
+        <name lang="en-US">Spelling, thesaurus, hyphenation and grammar checking tools for Brazilian Portuguese</name>
+        <name lang="ar">أدوات التدقيق الإملائي والمترادفات والواصلة والنحو للبرتغالية البرازيلية</name>
+        <name lang="cs">Slovník kontroly pravopisu, dělení slov, slovník synonym a kontrola gramatiky pro brazilskou portugalštinu</name>
+        <name lang="da">Retskrivnings-, synonym-, orddelings- og grammatikkontrol-værktøj til brasiliansk portugesisk</name>
+        <name lang="de">Rechtschreibung, Thesaurus, Silbentrennung und Grammatikprüfung für brasilianisches Portugiesisch</name>
+        <name lang="el">Εργαλεία ελέγχου ορθογραφίας, θησαυρού, συλλαβισμού και γραμματικής για τα Πορτογαλικά Βραζιλίας</name>
+        <name lang="es">Portugués (Brasil): corrector ortográfico y gramatical, sinónimos y reglas de silabación</name>
+        <name lang="fr">Correcteurs orthographique, grammatical et dictionnaire de coupure des mots pour le Portugais brésilien</name>
+        <name lang="hr">Pravopisni rječnik, tezaurus, rastavljanje riječi i gramatika brazilskog portugalskog jezika</name>
+        <name lang="hu">Brazíliai portugál helyesírási, szinomimaszótár, elválasztási és nyelvhelyesség-ellenőrzési eszközök</name>
+        <name lang="it">Strumenti di controllo ortografico, dei sinonimi, di sillabazione e grammaticale per il Portoghese brasiliano</name>
+        <name lang="ja">ポルトガル語（ブラジル）用のスペル、ハイフネーションと文法チェックツール</name>
+        <name lang="ko">브라질 포르투갈어를 위한 맞춤법, 동의어 사전, 하이픈 넣기, 문법 검사 도구</name>
+        <name lang="nb">Stave-, synonymordbok-, orddelings- og grammatikkkontrollverktøy for brasiliansk portugisisk</name>
+        <name lang="nl">Spelling, thesaurus, woordafbreking en grammaticacontrole hulpmiddelen voor Braziliaans Portugees</name>
+        <name lang="pl">Brazylijski portugalski słownik ortograficzny, słownik wyrazów bliskoznacznych, reguły dzielenia wyrazów i narzędzia do sprawdzania gramatyki</name>
+        <name lang="pt-BR">Ortografia, sinônimos, gramática e hifenização para Português do Brasil</name>
+        <name lang="sk">Slovník kontroly pravopisu, delenie slov, slovník synoným a kontrola gramatiky pre brazílsku portugalčinu</name>
+        <name lang="sl">Orodja za preverjanje črkovanja, slovar sopomenk, deljenje besed in preverjanje slovnice za brazilsko portugalščino</name>
+        <name lang="sv">Verktyg för stavning, synonymordbok, avstavning och grammatikkontroll för brasiliansk portugisiska</name>
+        <name lang="tr">Brezilya Portekizcesi için yazım, eş anlamlılar, heceleme ve dil bilgisi denetimi araçları</name>
+        <name lang="zh-CN">葡萄牙语（巴西）拼写词典、同义词库、断词规则与语法检查工具</name>
+        <name lang="zh-TW">巴西葡萄牙語的拼寫、同義字、連字號與文法檢查工具</name>
+        <name lang="pt-BR">Ortografia, sinônimos, gramática e hifenização para Português Brasileiro</name>
+    </display-name>
+    <platform value="all" />
+    <icon>
+        <default xlink:href="icons/VERO-logo.png" />
+    </icon>
+    <dependencies>
+        <OpenOffice.org-minimal-version value="3.0" d:name="BrOffice.org / OpenOffice.org 3.0" />
+    </dependencies>
+    <publisher>
+        <name xlink:href="http://pt-br.libreoffice.org/projetos/projeto-vero-verificador-ortografico" lang="pt-BR">VERO</name>
+    </publisher>
+</description>
+

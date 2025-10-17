@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE oor:component-data SYSTEM "../../../../component-update.dtd">
+<oor:component-data xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oor:name="OptionsDialog" oor:package="org.openoffice.Office">
+  <node oor:name="Nodes">
+    <node oor:name="LanguageSettings" oor:op="fuse">
+      <prop oor:name="Label">
+        <value xml:lang="en-US">Language Settings</value>
+        <value xml:lang="pt-BR">Configurações de idioma</value>
+      	<value xml:lang="ar">إعدادات اللغة</value>
+      	<value xml:lang="cs">Jazyková nastavení</value>
+      	<value xml:lang="da">Sprogindstillinger</value>
+      	<value xml:lang="de">Spracheinstellungen</value>
+      	<value xml:lang="el">Ρυθμίσεις γλώσσας</value>
+      	<value xml:lang="es">Idiomas y regiones</value>
+      	<value xml:lang="fr">Paramètres linguistiques</value>
+      	<value xml:lang="hr">Jezične postavke</value>
+      	<value xml:lang="hu">Nyelvi beállítások</value>
+      	<value xml:lang="it">Impostazioni della lingua</value>
+      	<value xml:lang="ja">言語設定</value>
+      	<value xml:lang="ko">언어 설정</value>
+      	<value xml:lang="nb">Språkinnstillinger</value>
+      	<value xml:lang="nl">Taalinstellingen</value>
+      	<value xml:lang="pl">Ustawienia językowe</value>
+      	<value xml:lang="pt-BR">Configurações de idioma</value>
+      	<value xml:lang="sk">Nastavenie jazyka</value>
+      	<value xml:lang="sl">Nastavitve jezika</value>
+      	<value xml:lang="sv">Språkinställningar</value>
+      	<value xml:lang="tr">Dil Ayarları</value>
+      	<value xml:lang="zh-CN">语言设置</value>
+      	<value xml:lang="zh-TW">語言設定</value>
+      </prop>
+      <node oor:name="Leaves">
+        <node oor:name="org.openoffice.lightproof.pt_BR" oor:op="fuse">
+          <prop oor:name="Id">
+            <value>org.openoffice.pt.hunspell.dictionaries</value>
+          </prop>
+          <prop oor:name="Label">
+            <value xml:lang="en-US">Grammar Checking (Portuguese)</value>
+            <value xml:lang="pt-BR">Corretor Gramatical (Português - Brasil)</value>
+          	<value xml:lang="ar">تدقيق نحوي (البرتغالية)</value>
+          	<value xml:lang="cs">Kontrola gramatiky (portugalština)</value>
+          	<value xml:lang="da">Grammatikkontrol (portugisisk)</value>
+          	<value xml:lang="de">Grammatikprüfung (Portugiesisch)</value>
+          	<value xml:lang="el">Γραμματικός έλεγχος (Πορτογαλικά)</value>
+          	<value xml:lang="es">Revisión gramatical (portugués)</value>
+          	<value xml:lang="fr">Vérification grammaticale (portugais)</value>
+          	<value xml:lang="hr">Provjera gramatike (portugalski)</value>
+          	<value xml:lang="hu">Portugál mondatellenőrző</value>
+          	<value xml:lang="it">Controllo grammaticale (Portoghese)</value>
+          	<value xml:lang="ja">文法チェック（ポルトガル語）</value>
+          	<value xml:lang="ko">문법 검사 (포르투갈어)</value>
+          	<value xml:lang="nb">Grammatikkkontroll (portugisisk)</value>
+          	<value xml:lang="nl">Grammaticacontrole (Portugees)</value>
+          	<value xml:lang="pl">Sprawdzanie gramatyki (portugalski)</value>
+          	<value xml:lang="pt-BR">Verificação gramatical (Português)</value>
+          	<value xml:lang="sk">Kontrola gramatiky (portugalčina)</value>
+          	<value xml:lang="sl">Preverjanje slovnice (portugalščina)</value>
+          	<value xml:lang="sv">Grammatikkontroll (portugisiska)</value>
+          	<value xml:lang="tr">Dilbilgisi Denetimi (Portekizce)</value>
+          	<value xml:lang="zh-CN">葡萄牙语的语法检查</value>
+          	<value xml:lang="zh-TW">文法檢查 (葡萄牙文)</value>
+          </prop>
+          <prop oor:name="OptionsPage">
+            <value>%origin%/pt_BR.xdl</value>
+          </prop>
+          <prop oor:name="EventHandlerService">
+            <value>org.libreoffice.comp.pyuno.LightproofOptionsEventHandler.pt_BR</value>
+          </prop>
+        </node>
+      </node>
+    </node>
+  </node>
+</oor:component-data>
