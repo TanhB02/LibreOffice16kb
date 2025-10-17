@@ -10,10 +10,10 @@ package org.libreoffice.androidlib;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
-import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -39,43 +38,15 @@ import android.print.PrintManager;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.MimeTypeMap;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.BufferedWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -88,7 +59,26 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.libreoffice.androidlib.lok.LokClipboardData;
-import org.libreoffice.androidlib.lok.LokClipboardEntry;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class LOActivity extends AppCompatActivity {
     final static String TAG = "LOActivity";
@@ -106,7 +96,7 @@ public class LOActivity extends AppCompatActivity {
     public static final String RECENT_DOCUMENTS_KEY = "RECENT_DOCUMENTS_LIST";
     private static String USER_NAME_KEY = "USER_NAME";
     public static final String NIGHT_MODE_KEY = "NIGHT_MODE";
-
+    private static Boolean FIRST_FOCUS = false;
     private File mTempFile = null;
 
     private int providerId;
@@ -123,9 +113,8 @@ public class LOActivity extends AppCompatActivity {
     private MobileSocket mMobileSocket = null;
     private SharedPreferences sPrefs;
     private Handler mMainHandler = null;
-    private RateAppController rateAppController;
 
-    private boolean isDocEditable = false;
+    private boolean isDocEditable = true;
     private boolean isDocDebuggable = BuildConfig.DEBUG;
     private boolean documentLoaded = false;
 
@@ -227,6 +216,8 @@ public class LOActivity extends AppCompatActivity {
         }
     }
 
+
+
     private Handler getMainHandler() {
         if (mMainHandler == null) {
             mMainHandler = new Handler(getMainLooper());
@@ -248,10 +239,6 @@ public class LOActivity extends AppCompatActivity {
 
         setContentView(R.layout.lolib_activity_main);
         mProgressDialog = new ProgressDialog(this);
-        if (BuildConfig.GOOGLE_PLAY_ENABLED)
-            this.rateAppController = new RateAppController(this);
-        else
-            this.rateAppController = null;
         this.mActivity = this;
         init();
     }
@@ -386,7 +373,7 @@ public class LOActivity extends AppCompatActivity {
 
             mWebView.setWebChromeClient(new WebChromeClient() {
                 @Override
-                public boolean onShowFileChooser(WebView mWebView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+                public boolean onShowFileChooser(WebView mWebView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
                     if (valueCallback != null) {
                         valueCallback.onReceiveValue(null);
                         valueCallback = null;
@@ -786,7 +773,7 @@ public class LOActivity extends AppCompatActivity {
     }
 
     /** Show the Saving progress and finish the app. */
-    private void finishWithProgress() {
+    void finishWithProgress() {
         if (!documentLoaded) {
             finishAndRemoveTask();
             return;
@@ -865,7 +852,7 @@ public class LOActivity extends AppCompatActivity {
         }
 
         if (isDocDebuggable) {
-            finalUrlToLoad += "&debug=true";
+            finalUrlToLoad += "&debug=false";
         }
 
         if (isLargeScreen() && !isChromeOS())
@@ -1014,8 +1001,6 @@ public class LOActivity extends AppCompatActivity {
 
                 if (messageID.equals("finish")) {
                     mProgressDialog.dismiss();
-                    if (BuildConfig.GOOGLE_PLAY_ENABLED && rateAppController != null)
-                        rateAppController.askUserForRating();
                     return;
                 }
 
@@ -1054,6 +1039,7 @@ public class LOActivity extends AppCompatActivity {
      * return true to pass the message to the native part or false to block the message
      */
     private boolean beforeMessageFromWebView(String[] messageAndParam) {
+        Log.d("TANHXXXX =>>>>>", messageAndParam[0]);
         switch (messageAndParam[0]) {
             case "BYE":
                 finishWithProgress();
@@ -1122,6 +1108,14 @@ public class LOActivity extends AppCompatActivity {
                         mIsEditModeActive = true;
                         // prompt for file conversion
                         requestForOdf();
+                        if (mWebView != null && !FIRST_FOCUS) {
+                            mWebView.requestFocus();
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                imm.showSoftInput(mWebView, InputMethodManager.SHOW_IMPLICIT);
+                            }
+                            FIRST_FOCUS = true;
+                        }
                         break;
                     case "off":
                         mIsEditModeActive = false;

@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto">
+
     <!-- App requires OpenGL ES 2.0 -->
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true" /> <!-- App wants to know if device supports USB host capability(not mandatory) -->
+        android:required="true" />
+
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="false" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -21,27 +24,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/LibreOfficeTheme">
-        <!-- SlideShow Activity -->
-        <activity
-            android:name="org.libreoffice.androidlib.SlideShowActivity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:screenOrientation="sensorLandscape"/>
+
 
         <!-- Document Browser Activity -->
         <activity
             android:name=".ui.LibreOfficeUIActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
-            android:exported="true">
+            android:exported="true"
+            android:process=":loactivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <action android:name="android.intent.action.PICK" />
-
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -51,85 +44,38 @@
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleTask"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.EDIT" />
                 <action android:name="android.intent.action.PICK" />
-
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
                 <data android:scheme="content" />
 
-                <!-- NOTE: If adding or removing mime types below, update also
-                     the list in openDocument() in LibreOfficeUIActivity.java.
-                     Unfortunately I found no way to manage this from one place :-( -->
-
-                <!-- ODF -->
-                <data android:mimeType="application/vnd.oasis.opendocument.text" />
-                <data android:mimeType="application/vnd.oasis.opendocument.graphics" />
-                <data android:mimeType="application/vnd.oasis.opendocument.presentation" />
-                <data android:mimeType="application/vnd.oasis.opendocument.spreadsheet" />
-                <data android:mimeType="application/vnd.oasis.opendocument.text-flat-xml" />
-                <data android:mimeType="application/vnd.oasis.opendocument.graphics-flat-xml" />
-                <data android:mimeType="application/vnd.oasis.opendocument.presentation-flat-xml" />
-                <data android:mimeType="application/vnd.oasis.opendocument.spreadsheet-flat-xml" />
-
-                <!-- ODF templates -->
-                <data android:mimeType="application/vnd.oasis.opendocument.text-template" />
-                <data android:mimeType="application/vnd.oasis.opendocument.spreadsheet-template" />
-                <data android:mimeType="application/vnd.oasis.opendocument.graphics-template" />
-                <!-- Seems at least Android 5.0 does not recognize this as the mime type of .otp files. -->
-                <data android:mimeType="application/vnd.oasis.opendocument.presentation-template" />
-
-                <!-- MS -->
-                <data android:mimeType="application/rtf" />
-                <data android:mimeType="text/rtf" />
-                <data android:mimeType="application/msword" />
-                <data android:mimeType="application/vnd.ms-powerpoint" />
-                <data android:mimeType="application/vnd.ms-excel" />
-                <data android:mimeType="application/vnd.visio" />
-                <data android:mimeType="application/vnd.visio.xml" />
-                <data android:mimeType="application/x-mspublisher" />
-                <data android:mimeType="application/vnd.ms-excel.sheet.binary.macroenabled.12" />
-                <data android:mimeType="application/vnd.ms-excel.sheet.macroenabled.12" />
-
-                <!-- OOXML -->
+                <!-- OOXML: DOCX / XLSX / PPTX -->
+                <data android:mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.presentation" />
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.slideshow" />
-                <data android:mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
 
                 <!-- OOXML templates -->
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.template" />
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.template" />
                 <data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.template" />
 
+                <!-- Legacy Microsoft -->
+                <data android:mimeType="application/msword" />
+                <data android:mimeType="application/vnd.ms-excel" />
+                <data android:mimeType="application/vnd.ms-powerpoint" />
+
                 <!-- OTHER -->
-                <data android:mimeType="text/csv" />
-                <data android:mimeType="text/plain" />
-                <data android:mimeType="text/comma-separated-values" />
-                <data android:mimeType="application/vnd.ms-works" />
-                <data android:mimeType="application/vnd.apple.keynote" />
-                <data android:mimeType="application/x-abiword" />
-                <data android:mimeType="application/x-pagemaker" />
-                <data android:mimeType="image/x-emf" />
-                <data android:mimeType="image/x-svm" />
-                <data android:mimeType="image/x-wmf" />
-                <data android:mimeType="image/svg+xml" />
                 <data android:mimeType="application/pdf" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
-            <!-- HACK to support ODF files on Chrome OS, inspired by
-                 https://stackoverflow.com/questions/1733195/android-intent-filter-for-a-particular-file-extension
 
-                 Seems like the ODF mime types are not available on Chrome OS,
-                 so we have to explicitly match the extension.  But the ".*" is
-                 not greedy, so the matching stops at the first "\\.", so we
-                 have to list several variants to handle files like "blah.ugh.odt".
-
-                 Additionally, this must not be in the above intent-filter
-                 section, because the android:mimeType="*/*" would make it
-                 make problems there. -->
+            <!-- ChromeOS and file manager support based on file extension -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.EDIT" />
@@ -142,44 +88,47 @@
                 <data android:host="*" />
                 <data android:mimeType="*/*" />
 
-                <data android:pathPattern=".*\\.odt" />
-                <data android:pathPattern=".*\\..*\\.odt" />
-                <data android:pathPattern=".*\\..*\\..*\\.odt" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.odt" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.odt" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.odt" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.odt" />
+                <!-- DOCX -->
+                <data android:pathPattern=".*\\.docx" />
+                <data android:pathPattern=".*\\..*\\.docx" />
+                <data android:pathPattern=".*\\..*\\..*\\.docx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.docx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.docx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.docx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.docx" />
 
-                <data android:pathPattern=".*\\.ods" />
-                <data android:pathPattern=".*\\..*\\.ods" />
-                <data android:pathPattern=".*\\..*\\..*\\.ods" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.ods" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ods" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.ods" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.ods" />
+                <!-- XLSX -->
+                <data android:pathPattern=".*\\.xlsx" />
+                <data android:pathPattern=".*\\..*\\.xlsx" />
+                <data android:pathPattern=".*\\..*\\..*\\.xlsx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.xlsx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.xlsx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.xlsx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.xlsx" />
 
-                <data android:pathPattern=".*\\.odp" />
-                <data android:pathPattern=".*\\..*\\.odp" />
-                <data android:pathPattern=".*\\..*\\..*\\.odp" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.odp" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.odp" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.odp" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.odp" />
+                <!-- PPTX -->
+                <data android:pathPattern=".*\\.pptx" />
+                <data android:pathPattern=".*\\..*\\.pptx" />
+                <data android:pathPattern=".*\\..*\\..*\\.pptx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.pptx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pptx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.pptx" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.pptx" />
             </intent-filter>
         </activity>
 
-        <!-- The Activity to show license or notice -->
-        <activity
-            android:name=".ShowHTMLActivity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:label="@string/title_activity_show_html" />
+        <!-- Service để quản lý LOActivity trong process riêng biệt -->
+        <service
+            android:name="org.libreoffice.androidlib.LOActivityService"
+            android:process=":loactivity"
+            android:exported="false" />
 
-        <!-- The Settings Activity -->
+        <!-- Wrapper activity để khởi chạy LOActivity thông qua service -->
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/app_name_settings"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:name="org.libreoffice.androidlib.LOActivityLauncher"
+            android:process=":loactivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.NoDisplay" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -188,8 +137,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
-
 </manifest>

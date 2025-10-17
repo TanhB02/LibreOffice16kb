@@ -7,6 +7,8 @@
 
 package org.libreoffice.androidapp.ui;
 
+import static androidx.core.content.pm.ShortcutManagerCompat.getMaxShortcutCountPerActivity;
+
 import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -19,24 +21,16 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
-import android.database.Cursor;
 import android.graphics.drawable.Icon;
-import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.provider.Settings;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,38 +39,13 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-
-import org.libreoffice.androidapp.AboutDialogFragment;
-import org.libreoffice.androidapp.R;
-import org.libreoffice.androidapp.SettingsActivity;
-import org.libreoffice.androidapp.SettingsListenerModel;
-import org.libreoffice.androidlib.LOActivity;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -90,9 +59,22 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static androidx.core.content.pm.ShortcutManagerCompat.getMaxShortcutCountPerActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
-public class LibreOfficeUIActivity extends AppCompatActivity implements SettingsListenerModel.OnSettingsPreferenceChangedListener {
+import org.libreoffice.androidapp.R;
+import org.libreoffice.androidlib.LOActivity;
+import org.libreoffice.androidlib.LOActivityLauncher;
+
+import java.io.FileFilter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class LibreOfficeUIActivity extends AppCompatActivity {
     private String LOGTAG = LibreOfficeUIActivity.class.getSimpleName();
     private SharedPreferences prefs;
     private int filterMode = FileUtilities.ALL;
@@ -127,7 +109,6 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
     private DrawerLayout drawerLayout;
     private NavigationView navigationDrawer;
     private ActionBar actionBar;
-    private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recentRecyclerView;
 
     //kept package-private to use these in recyclerView's adapter
@@ -148,7 +129,7 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
     private ImageView mRecentFilesListOrGrid;
 
     /** Request code to evaluate that we are returning from the LOActivity. */
-    private static final int LO_ACTIVITY_REQUEST_CODE = 42;
+    static final int LO_ACTIVITY_REQUEST_CODE = 42;
     private static final int OPEN_FILE_REQUEST_CODE = 43;
     private static final int CREATE_DOCUMENT_REQUEST_CODE = 44;
     private static final int CREATE_SPREADSHEET_REQUEST_CODE = 45;
@@ -161,16 +142,16 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         int mode = prefs.getInt(NIGHT_MODE_KEY, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         AppCompatDelegate.setDefaultNightMode(mode);
         super.onCreate(savedInstanceState);
-
+        Log.d("TANHXXXX =>>>>>", " oncreate");
+        Toast.makeText(this, "LibreOfficeUIActivity onCreate", Toast.LENGTH_SHORT).show();
         // initialize document provider factory
         //DocumentProviderFactory.initialize(this);
         //documentProviderFactory = DocumentProviderFactory.getInstance();
 
-        SettingsListenerModel.getInstance().setListener(this);
 
         // Register the LOActivity events broadcast receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(mLOActivityReceiver,
-              new IntentFilter(LOActivity.LO_ACTIVITY_BROADCAST));
+                new IntentFilter(LOActivity.LO_ACTIVITY_BROADCAST));
 
         // init UI and populate with contents from the provider
         createUI();
@@ -218,149 +199,6 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         return prefs;
     }
 
-    /** Create the Navigation menu and set up the actions and everything there. */
-    public void setupNavigationDrawer() {
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationDrawer = findViewById(R.id.navigation_drawer);
-        navigationDrawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    /* TODO Currently we don't support sorting of the recent files
-                    case R.id.menu_filter_everything:
-                        item.setChecked(true);
-                        filterMode = FileUtilities.ALL;
-                        //openDirectory(currentDirectory);
-                        break;
-
-                    case R.id.menu_filter_documents:
-                        item.setChecked(true);
-                        filterMode = FileUtilities.DOC;
-                        //openDirectory(currentDirectory);
-                        break;
-
-                    case R.id.menu_filter_spreadsheets:
-                        item.setChecked(true);
-                        filterMode = FileUtilities.CALC;
-                        //openDirectory(currentDirectory);
-                        break;
-
-                    case R.id.menu_filter_presentations:
-                        item.setChecked(true);
-                        filterMode = FileUtilities.IMPRESS;
-                        //openDirectory(currentDirectory);
-                        break;
-
-                    case R.id.menu_sort_size_asc:
-                        sortMode = FileUtilities.SORT_SMALLEST;
-                        this.onResume();
-                        break;
-
-                    case R.id.menu_sort_size_desc:
-                        sortMode = FileUtilities.SORT_LARGEST;
-                        this.onResume();
-                        break;
-
-                    case R.id.menu_sort_az:
-                        sortMode = FileUtilities.SORT_AZ;
-                        this.onResume();
-                        break;
-
-                    case R.id.menu_sort_za:
-                        sortMode = FileUtilities.SORT_ZA;
-                        this.onResume();
-                        break;
-
-                    case R.id.menu_sort_modified_newest:
-                        sortMode = FileUtilities.SORT_NEWEST;
-                        this.onResume();
-                        break;
-
-                    case R.id.menu_sort_modified_oldest:
-                        sortMode = FileUtilities.SORT_OLDEST;
-                        this.onResume();
-                        break;
-                    */
-
-                    case R.id.action_settings:
-                        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-                        return true;
-
-                    case R.id.action_about:
-                        AboutDialogFragment aboutDialogFragment = new AboutDialogFragment();
-                        aboutDialogFragment.show(getSupportFragmentManager(), "AboutDialogFragment");
-                        return true;
-                }
-                return false;
-            }
-        });
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.document_locations, R.string.close_document_locations) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-
-                /* TODO Currently we don't support sorting of the recent files
-                switch (sortMode) {
-                    case FileUtilities.SORT_SMALLEST:
-                        menu.findItem(R.id.menu_sort_size_asc).setChecked(true);
-                        break;
-
-                    case FileUtilities.SORT_LARGEST:
-                        menu.findItem(R.id.menu_sort_size_desc).setChecked(true);
-                        break;
-
-                    case FileUtilities.SORT_AZ:
-                        menu.findItem(R.id.menu_sort_az).setChecked(true);
-                        break;
-
-                    case FileUtilities.SORT_ZA:
-                        menu.findItem(R.id.menu_sort_za).setChecked(true);
-                        break;
-
-                    case FileUtilities.SORT_NEWEST:
-                        menu.findItem(R.id.menu_sort_modified_newest).setChecked(true);
-                        break;
-
-                    case FileUtilities.SORT_OLDEST:
-                        menu.findItem(R.id.menu_sort_modified_oldest).setChecked(true);
-                        break;
-                }
-
-                switch (filterMode) {
-                    case FileUtilities.ALL:
-                        menu.findItem(R.id.menu_filter_everything).setChecked(true);
-                        break;
-
-                    case FileUtilities.DOC:
-                        menu.findItem(R.id.menu_filter_documents).setChecked(true);
-                        break;
-
-                    case FileUtilities.CALC:
-                        menu.findItem(R.id.menu_filter_presentations).setChecked(true);
-                        break;
-
-                    case FileUtilities.IMPRESS:
-                        menu.findItem(R.id.menu_filter_presentations).setChecked(true);
-                        break;
-                }
-                */
-
-                supportInvalidateOptionsMenu();
-                navigationDrawer.requestFocus(); // Make keypad navigation easier
-                collapseFabMenu();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                supportInvalidateOptionsMenu();
-            }
-        };
-        drawerToggle.setDrawerIndicatorEnabled(true);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-    }
-
     public void createUI() {
         setContentView(R.layout.activity_document_browser);
 
@@ -393,7 +231,6 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         // allow context menu for the various files - for Open and Share
         registerForContextMenu(recentRecyclerView);
 
-        setupNavigationDrawer();
     }
 
     /** Initialize the FloatingActionButton. */
@@ -422,18 +259,33 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
                 switch (view.getId()) {
                     case R.id.newWriterFAB:
                     case R.id.writerLayout:
-                        createNewFileInputDialog(getString(R.string.new_textdocument) + FileUtilities.DEFAULT_WRITER_EXTENSION, "application/vnd.oasis.opendocument.text", CREATE_DOCUMENT_REQUEST_CODE);
+                        createNewFileInputDialog(
+                                getString(R.string.new_textdocument) + ".docx",
+                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                CREATE_DOCUMENT_REQUEST_CODE
+                        );
                         break;
+
                     case R.id.newCalcFAB:
                     case R.id.calcLayout:
-                        createNewFileInputDialog(getString(R.string.new_spreadsheet) + FileUtilities.DEFAULT_SPREADSHEET_EXTENSION, "application/vnd.oasis.opendocument.spreadsheet", CREATE_SPREADSHEET_REQUEST_CODE);
+                        createNewFileInputDialog(
+                                getString(R.string.new_spreadsheet) + ".xlsx",
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                CREATE_SPREADSHEET_REQUEST_CODE
+                        );
                         break;
+
                     case R.id.newImpressFAB:
                     case R.id.impressLayout:
-                        createNewFileInputDialog(getString(R.string.new_presentation) + FileUtilities.DEFAULT_IMPRESS_EXTENSION, "application/vnd.oasis.opendocument.presentation", CREATE_PRESENTATION_REQUEST_CODE);
+                        createNewFileInputDialog(
+                                getString(R.string.new_presentation) + ".pptx",
+                                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                                CREATE_PRESENTATION_REQUEST_CODE
+                        );
                         break;
                 }
             }
+
         };
 
         writerFAB = findViewById(R.id.newWriterFAB);
@@ -485,21 +337,6 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         isFabMenuOpen = false;
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        drawerToggle.syncState();
-    }
-
-    private void refreshView() {
-        // refresh view
-        updateRecentFiles();
-
-        // close drawer if it was open
-        drawerLayout.closeDrawer(navigationDrawer);
-        collapseFabMenu();
-    }
 
     @Override
     public void onBackPressed() {
@@ -526,7 +363,7 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.context_menu_open:
-                open(currentlySelectedFile);
+                UtilsOffice.open(this, currentlySelectedFile);
                 return true;
             case R.id.context_menu_share:
                 share(currentlySelectedFile);
@@ -562,18 +399,33 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
             prefs.edit().putString(EXPLORER_VIEW_TYPE_KEY, LIST_VIEW).apply();
     }
 
-    /** Build Intent to edit a Uri. */
+    /** Build Intent to edit a Uri using the new multi-process architecture. */
     public Intent getIntentToEdit(Uri uri) {
         Intent i = new Intent(Intent.ACTION_EDIT, uri);
         i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         i.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
         String packageName = getApplicationContext().getPackageName();
-        ComponentName componentName = new ComponentName(packageName, LOActivity.class.getName());
+        ComponentName componentName = new ComponentName(packageName, LOActivityLauncher.class.getName());
         i.setComponent(componentName);
 
         return i;
     }
+
+    /*
+     */
+/** Start editing of the given Uri. *//*
+
+    public void open(final Uri uri) {
+        if (uri == null)
+            return;
+
+        addDocumentToRecents(uri);
+
+        Intent i = getIntentToEdit(uri);
+        startActivityForResult(i, LO_ACTIVITY_REQUEST_CODE);
+    }
+*/
 
     /** Start editing of the given Uri. */
     public void open(final Uri uri) {
@@ -583,7 +435,7 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         addDocumentToRecents(uri);
 
         Intent i = getIntentToEdit(uri);
-        startActivityForResult(i, LO_ACTIVITY_REQUEST_CODE);
+        startActivity(i);
     }
 
     /** Opens an Input dialog to get the name of new file. */
@@ -717,58 +569,58 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         // are shown there as an option, the other mime types are just blank
         if (!LOActivity.isChromeOS(this)) {
             final String[] mimeTypes = new String[] {
-                // ODF
-                "application/vnd.oasis.opendocument.text",
-                "application/vnd.oasis.opendocument.graphics",
-                "application/vnd.oasis.opendocument.presentation",
-                "application/vnd.oasis.opendocument.spreadsheet",
-                "application/vnd.oasis.opendocument.text-flat-xml",
-                "application/vnd.oasis.opendocument.graphics-flat-xml",
-                "application/vnd.oasis.opendocument.presentation-flat-xml",
-                "application/vnd.oasis.opendocument.spreadsheet-flat-xml",
+                    // ODF
+                    "application/vnd.oasis.opendocument.text",
+                    "application/vnd.oasis.opendocument.graphics",
+                    "application/vnd.oasis.opendocument.presentation",
+                    "application/vnd.oasis.opendocument.spreadsheet",
+                    "application/vnd.oasis.opendocument.text-flat-xml",
+                    "application/vnd.oasis.opendocument.graphics-flat-xml",
+                    "application/vnd.oasis.opendocument.presentation-flat-xml",
+                    "application/vnd.oasis.opendocument.spreadsheet-flat-xml",
 
-                // ODF templates
-                "application/vnd.oasis.opendocument.text-template",
-                "application/vnd.oasis.opendocument.spreadsheet-template",
-                "application/vnd.oasis.opendocument.graphics-template",
-                "application/vnd.oasis.opendocument.presentation-template",
+                    // ODF templates
+                    "application/vnd.oasis.opendocument.text-template",
+                    "application/vnd.oasis.opendocument.spreadsheet-template",
+                    "application/vnd.oasis.opendocument.graphics-template",
+                    "application/vnd.oasis.opendocument.presentation-template",
 
-                // MS
-                "application/rtf",
-                "text/rtf",
-                "application/msword",
-                "application/vnd.ms-powerpoint",
-                "application/vnd.ms-excel",
-                "application/vnd.visio",
-                "application/vnd.visio.xml",
-                "application/x-mspublisher",
-                "application/vnd.ms-excel.sheet.binary.macroenabled.12",
-                "application/vnd.ms-excel.sheet.macroenabled.12",
+                    // MS
+                    "application/rtf",
+                    "text/rtf",
+                    "application/msword",
+                    "application/vnd.ms-powerpoint",
+                    "application/vnd.ms-excel",
+                    "application/vnd.visio",
+                    "application/vnd.visio.xml",
+                    "application/x-mspublisher",
+                    "application/vnd.ms-excel.sheet.binary.macroenabled.12",
+                    "application/vnd.ms-excel.sheet.macroenabled.12",
 
-                // OOXML
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    // OOXML
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                    "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 
-                // OOXML templates
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
-                "application/vnd.openxmlformats-officedocument.presentationml.template",
+                    // OOXML templates
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+                    "application/vnd.openxmlformats-officedocument.presentationml.template",
 
-                // other
-                "text/csv",
-                "text/plain",
-                "text/comma-separated-values",
-                "application/vnd.ms-works",
-                "application/vnd.apple.keynote",
-                "application/x-abiword",
-                "application/x-pagemaker",
-                "image/x-emf",
-                "image/x-svm",
-                "image/x-wmf",
-                "image/svg+xml",
-                "application/pdf"
+                    // other
+                    "text/csv",
+                    "text/plain",
+                    "text/comma-separated-values",
+                    "application/vnd.ms-works",
+                    "application/vnd.apple.keynote",
+                    "application/x-abiword",
+                    "application/x-pagemaker",
+                    "image/x-emf",
+                    "image/x-svm",
+                    "image/x-wmf",
+                    "image/svg+xml",
+                    "application/pdf"
             };
             i.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         }
@@ -792,9 +644,7 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Will close the drawer if the home button is pressed
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+
 
         switch (item.getItemId()) {
             case R.id.action_open_file:
@@ -831,12 +681,6 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         }
     }
 
-
-    @Override
-    public void settingsPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        readPreferences();
-        refreshView();
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -896,7 +740,8 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case LO_ACTIVITY_REQUEST_CODE: {
-                // TODO probably kill this, we don't need to do anything here any more
+                // LOActivity hiện tại chạy trong process riêng biệt
+                // Chúng ta không cần xử lý kết quả trả về nữa vì service sẽ quản lý việc đóng
                 Log.d(LOGTAG, "LOActivity has finished.");
                 break;
             }
@@ -911,7 +756,7 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
 
                 getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-                open(uri);
+                UtilsOffice.open(this, uri);
                 break;
             }
             case CREATE_DOCUMENT_REQUEST_CODE:
@@ -926,7 +771,7 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
                 String extension = (requestCode == CREATE_DOCUMENT_REQUEST_CODE) ? "odt" : ((requestCode == CREATE_SPREADSHEET_REQUEST_CODE) ? "ods" : "odp");
                 createNewFile(uri, extension);
 
-                open(uri);
+                UtilsOffice.open(this, uri);
                 break;
             }
         }
@@ -955,20 +800,19 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     PERMISSION_WRITE_EXTERNAL_STORAGE);
         }
-        Log.d(LOGTAG, "onStart");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(LOGTAG, "onStop");
+        Log.d("TANHXXXX =>>>>>", " onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mLOActivityReceiver);
-        Log.d(LOGTAG, "onDestroy");
+        Log.d("TANHXXXX =>>>>>", " onDestroy");
     }
 
     private int dpToPx(int dp) {
@@ -999,7 +843,7 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
         prefs.edit().putString(RECENT_DOCUMENTS_KEY, joined).apply();
 
         // Update app shortcuts (7.0 and above)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
 
             // Remove all shortcuts, and apply new ones.
@@ -1076,13 +920,13 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
                             .setMessage(getString(R.string.reason_required_to_read_documents));
                     if (showRationale) {
                         rationaleDialogBuilder.setPositiveButton(getString(R.string.positive_ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ActivityCompat.requestPermissions(LibreOfficeUIActivity.this,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        PERMISSION_WRITE_EXTERNAL_STORAGE);
-                            }
-                        })
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ActivityCompat.requestPermissions(LibreOfficeUIActivity.this,
+                                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                                PERMISSION_WRITE_EXTERNAL_STORAGE);
+                                    }
+                                })
                                 .setNegativeButton(getString(R.string.negative_im_sure), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -1093,14 +937,14 @@ public class LibreOfficeUIActivity extends AppCompatActivity implements Settings
                                 .show();
                     } else {
                         rationaleDialogBuilder.setPositiveButton(getString(R.string.positive_ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                                intent.setData(uri);
-                                startActivity(intent);
-                            }
-                        })
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                        intent.setData(uri);
+                                        startActivity(intent);
+                                    }
+                                })
                                 .setNegativeButton(R.string.negative_cancel, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
