@@ -38,7 +38,6 @@
             </intent-filter>
         </activity>
 
-        <!-- The main document editing Activity -->
         <activity
             android:name="org.libreoffice.androidlib.LOActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
@@ -117,13 +116,11 @@
             </intent-filter>
         </activity>
 
-        <!-- Service để quản lý LOActivity trong process riêng biệt -->
         <service
             android:name="org.libreoffice.androidlib.LOActivityService"
             android:process=":loactivity"
             android:exported="false" />
 
-        <!-- Wrapper activity để khởi chạy LOActivity thông qua service -->
         <activity
             android:name="org.libreoffice.androidlib.LOActivityLauncher"
             android:process=":loactivity"

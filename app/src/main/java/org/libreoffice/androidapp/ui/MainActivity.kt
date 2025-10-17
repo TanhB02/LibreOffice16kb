@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import org.libreoffice.androidapp.R
 import org.libreoffice.androidapp.databinding.ActivityMainBinding
 import org.libreoffice.androidlib.utils.*
+import org.libreoffice.androidlib.utils.UtilsOffice.openFile
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
                 try {
                     val uri = Uri.parse(uriString)
-                    UtilsOffice.open(this@MainActivity, uri)
+                    openFile( uri)
                 } catch (e: Exception) {
                     Toast.makeText(
                         this@MainActivity,

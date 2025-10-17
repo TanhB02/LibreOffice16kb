@@ -1,29 +1,84 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
+    id 'kotlin-parcelize'
 }
 
 apply from: 'libSettings.gradle'
 
 android {
+    compileSdk 35
     namespace 'org.libreoffice.androidlib'
-    compileSdkVersion 36
-    ndkVersion "26.1.10909125"
-    buildDir = "${rootProject.getBuildDir()}/lib"
-
     defaultConfig {
-        minSdkVersion 26
-        targetSdkVersion 36
+        minSdkVersion 24
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
 
         resValue "string", "app_name", "${liboAppName}"
         buildConfigField "String", "GIT_COMMIT", "\"${liboOVersionHash}\""
         buildConfigField "boolean", "GOOGLE_PLAY_ENABLED", "${liboGooglePlay}"
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            zipAlignEnabled true
+            debuggable false
+            renderscriptOptimLevel 3
+
+            ndk {
+                debugSymbolLevel 'NONE'
+            }
+        }
+        debug {
+            resValue "string", "app_name", "${liboAppName} Debug"
+            debuggable true
+        }
+    }
+
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+        exclude 'META-INF/**'
+        exclude 'kotlin/**'
+        exclude '**/*.kotlin_metadata'
+        exclude '**/*.kotlin_module'
+        exclude '**/*.kotlin_builtins'
+        exclude 'DebugProbesKt.bin'
+        exclude 'kotlin-tooling-metadata.json'
+        exclude 'lib/*/libc++_shared.so'
+        exclude 'lib/*/libjsc.so'
+        exclude 'META-INF/rxjava.properties'
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'assets/webkit/**'
+        merge '**/LICENSE'
+        merge '**/LICENSE.txt'
+        merge '**/NOTICE'
+        merge '**/NOTICE.txt'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "11"
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     splits {
@@ -38,27 +93,10 @@ android {
         disable 'MissingTranslation', 'ExtraTranslation'
     }
 
-    buildTypes {
-        debug {
-            resValue "string", "app_name", "${liboAppName} Debug"
-            debuggable true
-        }
-        release {
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
     sourceSets {
         main {
             jniLibs.srcDirs = ["libs"]
         }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -77,4 +115,50 @@ dependencies {
             because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
         }
     }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = "ezt.documents"
+                artifactId = "libreoffice"
+                version = "1.0.0-beta1"
+
+                artifact(tasks.getByName("bundleReleaseAar"))
+
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    configurations.api.allDependencies.each { dependency ->
+                        if (dependency.group != null && dependency.version != null) {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', dependency.group)
+                            dependencyNode.appendNode('artifactId', dependency.name)
+                            dependencyNode.appendNode('version', dependency.version)
+                            dependencyNode.appendNode('scope', 'compile')
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                name = "TanhB02"
+                url = uri("https://maven.pkg.github.com/TanhB02/Libreoffice16kb")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR") ?: project.properties["gpr.user"] as String
+                    password = System.getenv("GITHUB_TOKEN") ?: project.properties["gpr.key"] as String
+                }
+            }
+        }
+    }
+}
+
+
+tasks.withType(JavaExec).configureEach {
+    jvmArgs += ['--add-opens=java.base/java.util.concurrent=ALL-UNNAMED']
+}
+
+tasks.named('publish') {
+    dependsOn 'assembleRelease'
 }

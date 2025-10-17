@@ -1,182 +1,124 @@
-/* -*- tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
-/*
+/* -*- tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */ /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+package org.libreoffice.androidapp.ui
 
-package org.libreoffice.androidapp.ui;
+import android.app.Activity
+import android.database.Cursor
+import android.net.Uri
+import android.provider.OpenableColumns
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import org.libreoffice.androidapp.R
+import org.libreoffice.androidlib.utils.UtilsOffice.openFile
 
-import android.app.Activity;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.OpenableColumns;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+internal class RecentFilesAdapter(
+    private var mActivity: LibreOfficeUIActivity,
+    recentUris: MutableList<Uri>
+) : RecyclerView.Adapter<RecentFilesAdapter.ViewHolder?>() {
+    private val KB: Long = 1024
+    private val MB: Long = 1048576
 
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
+    private var recentFiles: ArrayList<RecentFile>? = null
 
-import org.libreoffice.androidapp.R;
-import org.libreoffice.androidlib.utils.UtilsOffice;
-
-import java.util.ArrayList;
-import java.util.List;
-
-class RecentFilesAdapter extends RecyclerView.Adapter<RecentFilesAdapter.ViewHolder> {
-
-    private final long KB = 1024;
-    private final long MB = 1048576;
-
-    private LibreOfficeUIActivity mActivity;
-    private ArrayList<RecentFile> recentFiles;
-
-    RecentFilesAdapter(LibreOfficeUIActivity activity, List<Uri> recentUris) {
-        this.mActivity = activity;
-        initRecentFiles(recentUris);
+    init {
+        initRecentFiles(recentUris)
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View item = LayoutInflater.from(parent.getContext()).inflate(mActivity.isViewModeList() ? R.layout.file_list_item : R.layout.file_explorer_grid_item, parent, false);
-        return new ViewHolder(item);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val item = LayoutInflater.from(parent.getContext()).inflate(
+            if (mActivity.isViewModeList) R.layout.file_list_item else R.layout.file_explorer_grid_item,
+            parent,
+            false
+        )
+        return ViewHolder(item)
     }
 
-    /** Validate uris in case of removed/renamed documents and return RecentFile ArrayList from the valid uris */
-    public void initRecentFiles(List<Uri> recentUris) {
-        this.recentFiles = new ArrayList<>();
-        boolean invalidUriFound = false;
-        String joined = "";
-        for (Uri u: recentUris) {
-            String filename = getUriFilename(mActivity, u);
+    /** Validate uris in case of removed/renamed documents and return RecentFile ArrayList from the valid uris  */
+    fun initRecentFiles(recentUris: MutableList<Uri>) {
+        this.recentFiles = ArrayList<RecentFile>()
+        var invalidUriFound = false
+        var joined = ""
+        for (u in recentUris) {
+            val filename: String? = getUriFilename(mActivity, u)
             if (null != filename) {
-                long length = getUriFileLength(mActivity, u);
-                recentFiles.add(new RecentFile(u, filename, length));
-                joined = joined.concat(u.toString()+"\n");
-            }
-            else
-                invalidUriFound = true;
+                val length: Long = getUriFileLength(mActivity, u)
+                recentFiles!!.add(RecentFile(u, filename, length))
+                joined = joined + u.toString() + "\n"
+            } else invalidUriFound = true
         }
         if (invalidUriFound) {
-            mActivity.getPrefs().edit().putString(mActivity.RECENT_DOCUMENTS_KEY, joined).apply();
+            mActivity.getPrefs().edit()
+                .putString(LibreOfficeUIActivity.Companion.RECENT_DOCUMENTS_KEY, joined).apply()
         }
     }
 
-    /** Return the filename of the given Uri. */
-    public static String getUriFilename(Activity activity, Uri uri) {
-        String filename = "";
-        Cursor cursor = null;
-        try {
-            cursor = activity.getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst())
-                filename = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
-        } catch (Exception e) {
-            return null;
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val file = recentFiles!!.get(position)
 
-        if (filename.isEmpty())
-            return null;
-
-        return filename;
-    }
-
-    /** Return the size of the given Uri. */
-    public static long getUriFileLength(Activity activity, Uri uri) {
-        long length = 0;
-        Cursor cursor = null;
-        try {
-            cursor = activity.getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst())
-                length = cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE));
-        } catch (Exception e) {
-            return 0;
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-
-        if (length == 0) {
-            // TODO maybe try to get File & return File.length()?
-        }
-
-        return length;
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        final RecentFile file = recentFiles.get(position);
-
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UtilsOffice.open(mActivity, file.uri);
-                Log.d("RecentFilesAdapter", "onClick: "+ file.uri);
+        val clickListener: View.OnClickListener = object : View.OnClickListener {
+            override fun onClick(view: View?) {
+                mActivity.openFile(file.uri)
+                Log.d("RecentFilesAdapter", "onClick: " + file.uri)
             }
-        };
+        }
 
-        holder.filenameView.setOnClickListener(clickListener);
-        holder.imageView.setOnClickListener(clickListener);
+        holder.filenameView.setOnClickListener(clickListener)
+        holder.imageView.setOnClickListener(clickListener)
 
-        holder.fileActionsImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mActivity.openContextMenu(view, file.uri);
+        holder.fileActionsImageView.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
+                mActivity.openContextMenu(view, file.uri)
             }
-        });
+        })
 
-        String filename = file.filename;
-        long length = file.fileLength;
+        val filename = file.filename
+        val length = file.fileLength
 
         // TODO Date not available now
         //Date date = null;
+        holder.filenameView.setText(filename)
 
-        holder.filenameView.setText(filename);
+        var compoundDrawableInt = 0
 
-        int compoundDrawableInt = 0;
-
-        switch (FileUtilities.getType(filename)) {
-            case FileUtilities.DOC:
-                compoundDrawableInt = R.drawable.writer;
-                break;
-            case FileUtilities.CALC:
-                compoundDrawableInt = R.drawable.calc;
-                break;
-            case FileUtilities.DRAWING:
-                compoundDrawableInt = R.drawable.draw;
-                break;
-            case FileUtilities.IMPRESS:
-                compoundDrawableInt = R.drawable.impress;
-                break;
-            case FileUtilities.PDF:
-                compoundDrawableInt = R.drawable.pdf;
-                break;
+        when (FileUtilities.getType(filename)) {
+            FileUtilities.DOC -> compoundDrawableInt = R.drawable.writer
+            FileUtilities.CALC -> compoundDrawableInt = R.drawable.calc
+            FileUtilities.DRAWING -> compoundDrawableInt = R.drawable.draw
+            FileUtilities.IMPRESS -> compoundDrawableInt = R.drawable.impress
+            FileUtilities.PDF -> compoundDrawableInt = R.drawable.pdf
         }
 
-        if (compoundDrawableInt != 0)
-            holder.imageView.setImageDrawable(ContextCompat.getDrawable(mActivity, compoundDrawableInt));
+        if (compoundDrawableInt != 0) holder.imageView.setImageDrawable(
+            ContextCompat.getDrawable(
+                mActivity,
+                compoundDrawableInt
+            )
+        )
 
         // Date and Size field only exist when we are displaying items in a list.
-        if (mActivity.isViewModeList()) {
-            String size;
-            String unit = "B";
+        if (mActivity.isViewModeList) {
+            val size: String?
+            var unit = "B"
             if (length < KB) {
-                size = Long.toString(length);
+                size = length.toString()
             } else if (length < MB) {
-                size = Long.toString(length / KB);
-                unit = "KB";
+                size = (length / KB).toString()
+                unit = "KB"
             } else {
-                size = Long.toString(length / MB);
-                unit = "MB";
+                size = (length / MB).toString()
+                unit = "MB"
             }
-            holder.fileSizeView.setText(size);
-            holder.fileSizeUnitView.setText(unit);
+            holder.fileSizeView!!.setText(size)
+            holder.fileSizeUnitView!!.setText(unit)
 
             /* TODO Date not available now
             if (date != null) {
@@ -188,46 +130,77 @@ class RecentFilesAdapter extends RecyclerView.Adapter<RecentFilesAdapter.ViewHol
         }
     }
 
-    @Override
-    public int getItemCount() {
-        if (recentFiles.size() == 0) {
-            mActivity.noRecentItemsTextView.setVisibility(View.VISIBLE);
+    override fun getItemCount(): Int {
+        if (recentFiles!!.size == 0) {
+            mActivity.noRecentItemsTextView!!.setVisibility(View.VISIBLE)
         } else {
-            mActivity.noRecentItemsTextView.setVisibility(View.GONE);
+            mActivity.noRecentItemsTextView!!.setVisibility(View.GONE)
         }
-        return recentFiles.size();
+        return recentFiles!!.size
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    internal inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var filenameView: TextView
+        var fileSizeView: TextView? = null
+        var fileSizeUnitView: TextView? = null /*, fileDateView*/
+        var imageView: ImageView
+        var fileActionsImageView: ImageView
 
-        TextView filenameView, fileSizeView, fileSizeUnitView/*, fileDateView*/;
-        ImageView imageView, fileActionsImageView;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-            this.filenameView = itemView.findViewById(R.id.file_item_name);
-            this.imageView = itemView.findViewById(R.id.file_item_icon);
-            this.fileActionsImageView = itemView.findViewById(R.id.file_actions_button);
+        init {
+            this.filenameView = itemView.findViewById<TextView>(R.id.file_item_name)
+            this.imageView = itemView.findViewById<ImageView>(R.id.file_item_icon)
+            this.fileActionsImageView = itemView.findViewById<ImageView>(R.id.file_actions_button)
             // Check if view mode is List, only then initialise Size and Date field
-            if (mActivity.isViewModeList()) {
-                fileSizeView = itemView.findViewById(R.id.file_item_size);
-                fileSizeUnitView = itemView.findViewById(R.id.file_item_size_unit);
+            if (mActivity.isViewModeList) {
+                fileSizeView = itemView.findViewById<TextView>(R.id.file_item_size)
+                fileSizeUnitView = itemView.findViewById<TextView>(R.id.file_item_size_unit)
                 //fileDateView = itemView.findViewById(R.id.file_item_date);
             }
         }
     }
-    /** Cache the name & size so that we don't have ask later. */
-    private class RecentFile {
-        public Uri uri;
-        public String filename;
-        public long fileLength;
 
-        public RecentFile(Uri uri, String filename, long fileLength) {
-            this.uri = uri;
-            this.filename = filename;
-            this.fileLength = fileLength;
+    /** Cache the name & size so that we don't have ask later.  */
+    private inner class RecentFile(var uri: Uri?, var filename: String?, var fileLength: Long)
+    companion object {
+        /** Return the filename of the given Uri.  */
+        fun getUriFilename(activity: Activity, uri: Uri): String? {
+            var filename = ""
+            var cursor: Cursor? = null
+            try {
+                cursor = activity.getContentResolver().query(uri, null, null, null, null)
+                if (cursor != null && cursor.moveToFirst()) filename =
+                    cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+            } catch (e: Exception) {
+                return null
+            } finally {
+                if (cursor != null) cursor.close()
+            }
+
+            if (filename.isEmpty()) return null
+
+            return filename
+        }
+
+        /** Return the size of the given Uri.  */
+        fun getUriFileLength(activity: Activity, uri: Uri): Long {
+            var length: Long = 0
+            var cursor: Cursor? = null
+            try {
+                cursor = activity.getContentResolver().query(uri, null, null, null, null)
+                if (cursor != null && cursor.moveToFirst()) length =
+                    cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE))
+            } catch (e: Exception) {
+                return 0
+            } finally {
+                if (cursor != null) cursor.close()
+            }
+
+            if (length == 0L) {
+                // TODO maybe try to get File & return File.length()?
+            }
+
+            return length
         }
     }
-}
+} /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 
-/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
