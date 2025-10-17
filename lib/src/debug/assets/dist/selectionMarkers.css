@@ -1,0 +1,30 @@
+.text-selection-handle-start {
+	position: absolute;
+	width: 30px;
+	height: 44px;
+	background-image: url('images/handle_start.svg');
+}
+
+.text-selection-handle-end {
+	position: absolute;
+	width: 30px;
+	height: 44px;
+	background-image: url('images/handle_end.svg');
+}
+
+.leaflet-cursor-handler {
+	margin-left: -14px;
+	width: 30px;
+	height: 44px;
+	background-image: url('images/cursor-handler.svg');
+}
+
+.html-object-section {
+	display: block;
+	position: absolute;
+	cursor: pointer;
+	left: 0;
+	top: 0;
+	z-index: 11;
+	user-select: none;
+}

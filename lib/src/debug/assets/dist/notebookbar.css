@@ -1,0 +1,681 @@
+
+/* tabs */
+
+.notebookbar-tabs-container {
+	display: inline-flex;
+	flex: 0.1 0.1 auto;
+	margin-inline-start: 5px;
+}
+
+.ui-tabs.notebookbar {
+	display: inline-flex;
+	z-index: 999;
+	padding: 0px;
+	height: 100%;
+}
+
+button.ui-tab.notebookbar {
+	box-sizing: border-box;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 clamp(4px, 1vw, 1em);
+	border: 1px solid transparent;
+	background-color: transparent;
+	/* calc([minimum size]
+	   + ([maximum size] - [minimum size])
+	   * ((100vw - [minimum viewport width]) / ([maximum viewport width] - [minimum viewport width]))); */
+	font-size: calc(var(--tb-min-fs) + (var(--tb-max-fs-u) - var(--tb-min-fs-u)) * ((100vw - 640px) / (1000 - 640)));
+	/* a minimum value, a preferred value or scaler, and a maximum allowed value. */
+	font-size: clamp(var(--tb-min-fs), var(--tb-fs-s), var(--tb-max-fs));
+	font-family: var(--cool-font);
+	line-height: normal;
+	color: var(--color-main-text);
+}
+
+.ui-tab.notebookbar[style*='block'] {
+	display: inline-flex !important;
+}
+
+.ui-tab.hidden.notebookbar {
+	display: none !important;
+}
+
+.ui-tab.selected.notebookbar {
+	border: 1px solid transparent !important;
+	color: var(--color-text-darker) !important;
+	box-shadow: inset 12px 0 var(--color-main-background), inset -12px 0 var(--color-main-background), inset 0 -2px rgb(var(--doc-type));
+	transition: box-shadow 0.1s ease-out;
+}
+
+.ui-tab.selected.notebookbar:hover {
+	box-shadow: inset 0 0 var(--color-main-background), inset 0 0 var(--color-main-background), inset 0 -2px rgb(var(--doc-type));
+	transition: box-shadow 0.3s ease;
+}
+
+.ui-tab.notebookbar:hover {
+	cursor: pointer !important;
+	color: var(--color-text-darker) !important;
+	box-shadow: inset 12px 0 var(--color-main-background), inset -12px 0 var(--color-main-background), inset 0 -2px var(--color-border);
+}
+
+/* Document Logo */
+.main-nav.hasnotebookbar #document-header {
+	height: 100%;
+	background: transparent;
+	align-items: center;
+	display: flex;
+}
+
+/* grid */
+.notebookbar.ui-grid {
+	border-spacing: 0px;
+}
+
+/* shortcuts bar */
+
+.notebookbar-shortcuts-bar {
+	display: inline-block;
+	position: relative;
+	z-index: 1000;
+	box-sizing: border-box;
+}
+
+.notebookbar-shortcuts-bar > table {
+	display: block;
+	height: 31px;
+}
+
+.notebookbar-shortcuts-bar .unotoolbutton.notebookbar .unobutton {
+	width: var(--btn-size-m);
+	height: var(--btn-size-m);
+	padding: var(--btn-padding);
+	justify-content: center;
+	align-items: center;
+}
+
+.notebookbar-shortcuts-bar .unotoolbutton.notebookbar .unobutton img {
+	width: 16px;
+	height: 16px;
+	margin: 0;
+}
+
+.unoSave.savemodified .unobutton img,
+.savemodified.unotoolbutton .unobutton img,
+#save.saving img,
+#save.saved img {
+	box-sizing: border-box;
+	padding-left: var(--btn-img-size) !important;
+}
+
+html:not([data-theme='dark']) .unoSave.savemodified .unobutton img,
+html:not([data-theme='dark']) .savemodified.unotoolbutton .unobutton img {
+	background: url('images/lc_savemodified.svg') no-repeat center;
+}
+
+html[data-theme='dark'] .unoSave.savemodified .unobutton img,
+html[data-theme='dark'] .savemodified.unotoolbutton .unobutton img {
+	background: url('images/dark/lc_savemodified.svg') no-repeat center;
+}
+
+.notebookbar-shortcuts-bar .notebookbar.unotoolbutton {
+	margin: 0px !important;
+}
+
+.notebookbar-shortcuts-bar .cell.notebookbar {
+	padding: 0 2px;
+}
+
+.hasnotebookbar .notebookbar-shortcuts-bar #Menubar,
+.hasnotebookbar .notebookbar-shortcuts-bar #Menubar li,
+.hasnotebookbar .notebookbar-shortcuts-bar #Menubar > li > a {
+	background-color: transparent;
+	margin: 0px !important;
+}
+
+
+.hasnotebookbar .notebookbar-shortcuts-bar #Menubar > li > a {
+	cursor: pointer;
+	border: none;
+	padding: 4px;
+}
+
+.hasnotebookbar #shortcuts-menubar-icon {
+	position: absolute;
+	top: 45%;
+	left: 6px;
+	height: 2px;
+	width: 16px;
+	-webkit-transition: all 0.25s;
+	transition: all 0.25s;
+}
+
+#Open_Local_Editor img {
+	opacity: .8;
+}
+[data-theme='dark'] #Open_Local_Editor img {
+	filter: invert(1);
+}
+
+/* options section */
+.notebookbar-options-section .cell.notebookbar {
+	padding: 0;
+}
+
+/* root container */
+
+.root-container.notebookbar {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#toolbar-wrapper.hasnotebookbar {
+	background: var(--color-background-lighter);
+	position: relative;
+	z-index: 11;
+}
+
+.hasnotebookbar > #toolbar-row {
+	height: 74px;
+}
+
+.vertical.notebookbar {
+	width: max-content;
+	display: grid;
+	grid-auto-flow: row;
+	grid-gap: 4px;
+}
+
+.notebookbar.ui-separator.vertical {
+	width: 1px;
+	background-color: var(--color-toolbar-border);
+	height: 100%;
+	margin: 0 2px;
+	box-sizing: border-box;
+}
+
+.horizontal.notebookbar {
+	display: grid;
+	grid-auto-flow: column;
+	grid-gap: 4px;
+	align-items: center;
+	justify-items: center;
+	width: max-content;
+}
+
+/* unobuttons */
+
+/* avoid bug with arrow in new line when window is small */
+#table-Home-Section-Insert #table-LineB9 #InsertGraphic.notebookbar,
+#table-Home-Section-Insert #table-GroupB20 #InsertTable.notebookbar {
+	width: 50px;
+}
+#table-Home-Section-Insert #table-LineB9 #InsertGraphic.notebookbar {
+	width: auto;
+	margin-left: -2px;
+}
+#buttonbefore.notebookbar, #buttonafter.notebookbar, #buttonoptimal.notebookbar, #buttonparallel.notebookbar, #buttonnone.notebookbar, #buttonthrough.notebookbar, #bottom.notebookbar, #top.notebookbar, #standard.notebookbar, #Bold.notebookbar, #Italic.notebookbar, #Underline.notebookbar, #Strikeout.notebookbar {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+.unotoolbutton.notebookbar .unobutton {
+	box-sizing: border-box;
+	padding: var(--btn-padding);
+	width: var(--btn-size);
+	height: var(--btn-size);
+	background-color: transparent;
+	margin: 0;
+	vertical-align: middle;
+	border: none;
+	line-height: 0em;
+	color: var(--color-main-text);
+	font-size: var(--default-font-size);
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	justify-content: center;
+	align-items: center;
+}
+
+.unotoolbutton.notebookbar .unobutton::after {
+	--click-increment: -1px;
+	position: absolute;
+	content: '';
+	top: var(--click-increment);
+	right: var(--click-increment);
+	bottom: var(--click-increment);
+	left: var(--click-increment);
+}
+
+.unotoolbutton.notebookbar.inline:hover {
+	background-color: var(--color-background-darker);
+}
+
+.jsdialog .ui-tabs-content {
+	margin-top: 10px;
+}
+
+.ui-tabs-content .unobutton > img {
+	width: var(--btn-img-size);
+	height: var(--btn-img-size);
+}
+
+.has-dropdown--color.notebookbar {
+	height: var(--btn-size) !important;
+}
+
+.unotoolbutton.notebookbar .unolabel {
+	font-size: var(--header-font-size);
+	font-family: var(--cool-font);
+	color: var(--color-main-text);
+	padding: 0px 5px !important;
+	line-height: normal;
+	grid-column: 2;
+}
+
+#table-HomeTab .unospan-uptoolbar:not(.disabled) {
+	border-top-left-radius: 12px;
+	border-bottom-left-radius: 12px;
+	background: linear-gradient(to left, #e6e6e600, #e6e6e652 30%);
+}
+#table-HomeTab .unospan-downtoolbar:not(.disabled) {
+	background: linear-gradient(to right, #e6e6e600, #e6e6e652 30%);
+	border-top-right-radius: 12px;
+	border-bottom-right-radius: 12px;
+}
+#table-HomeTab .unospan-uptoolbar:not(.disabled):hover {
+	box-shadow: -2px 0 2px 2px #e6e6e6b0;
+}
+#table-HomeTab .unospan-downtoolbar:not(.disabled):hover {
+	box-shadow: 2px 0 2px 2px #e6e6e6b0;
+}
+#table-HomeTab .unospan-uptoolbar img, #table-HomeTab .unospan-downtoolbar img {
+	width: 18px !important;
+	height: 18px !important;
+	padding: 4px;
+}
+
+.unotoolbutton.notebookbar.disabled:not(.unospan-shortcutstoolbox),
+.unotoolbutton[disabled]:not(.unospan-shortcutstoolbox),
+.mobile-wizard-widebutton.disabled,
+.locking-disabled {
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+
+.locking-disabled:hover {
+	opacity: 1;
+}
+
+.restricted-item {
+	display: none !important;
+}
+
+.unotoolbutton.notebookbar.disabled img,
+.mobile-wizard-widebutton.disabled img,
+.unotoolbutton[disabled] img {
+	-webkit-filter: grayscale(100%) brightness(100%);
+	filter: grayscale(100%) brightness(100%);
+}
+
+.unotoolbutton:not(.disabled) * {
+	cursor: pointer;
+}
+
+.unotoolbutton[disabled] * {
+	cursor: not-allowed !important;
+}
+
+.unotoolbutton.notebookbar {
+	text-align: center;
+}
+
+.unotoolbutton.notebookbar.has-label > *:not(.arrowbackground) { /*so they stay side by side*/
+	display: table-cell;
+	width: 100%;
+	height: 100%;
+}
+
+.unotoolbutton.notebookbar.has-label {
+	text-align: center;
+}
+
+.unotoolbutton.notebookbar.has-label:not(.inline) img {
+	width: 24px !important;
+	margin: auto !important;
+	display: block;
+}
+.has-label.has-dropdown:not(.inline) .unolabel {
+	display: inline-block;
+	clear: both;
+}
+
+/* adding focus to tab in notebookbar */
+.ui-tab.selected.notebookbar.add-focus-to-tab {
+	border: 2px solid black !important
+}
+
+/* unobuttons with inline labels */
+
+.inline.notebookbar {
+	width: max-content;
+	white-space: nowrap;
+	display: grid;
+	grid-auto-flow: column;
+	align-items: center;
+}
+
+#FormatPaintbrush span {
+	display: none;
+}
+
+/* Writer */
+
+/* File Tab */
+
+/* Home tab */
+.notebookbar.ui-combobox * {
+	line-height: 22px;
+}
+
+/* Styles preview */
+
+#stylesview {
+	height: 64px;
+	width: 35vw;
+	overflow: auto;
+	display: grid;
+	/* Preview base64's width = 100px + container border's etc */
+	grid-template-columns: repeat(auto-fit, minmax(122px, 1fr));
+	/* Preview base64's height = 30px  + container border's etc */
+	grid-template-rows: repeat(auto-fit, minmax(33px, 1fr));
+	padding: 0px;
+	border: 1px solid var(--color-stylesview-border);
+	border-radius: var(--border-radius);
+	border-collapse: separate; /*To use box-shadow in Internet Explorer 9 or later*/
+	scrollbar-width: none;
+	background-color: var(--color-stylesview-background);
+	filter: brightness(var(--brightness-stylesview));
+	box-sizing: border-box;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	row-gap: 0;
+}
+
+#stylesview-btn {
+	border: 1px solid var(--color-stylesview-border);
+	border-top-right-radius: var(--border-radius);
+	border-bottom-right-radius: var(--border-radius);
+	height: 64px;
+	margin-inline-start: -5px;
+	box-sizing: border-box;
+}
+
+#stylesview-btn.vertical {
+	gap: 0;
+}
+
+#stylesview-btn div {
+	border: none;
+}
+
+#stylesview-btn button img {
+	width: var(--btn-img-size-s) !important;
+	height: var(--btn-img-size-s) !important;
+	box-sizing: border-box;
+}
+
+#stylesview-btn button {
+	width: var(--btn-size-s) !important;
+	height: var(--btn-size-s) !important;
+}
+
+#stylesview:hover {
+	filter: none;
+}
+
+#stylesview::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+
+#stylesview .ui-iconview-entry {
+	box-sizing: border-box;
+	padding-top: 0px;
+	align-self: start;
+}
+
+#stylesview .icon-view-item-container {
+	margin: unset;
+}
+
+#stylesview .ui-iconview-entry-title {
+	display: none;
+}
+
+#stylesview .ui-iconview-entry.selected {
+	border: 1px solid var(--color-border-darker);
+	border-collapse: separate; /*To use box-shadow in Internet Explorer 9 or later*/
+	background-color: transparent;
+}
+
+#stylesview .ui-iconview-entry:not(.selected) {
+	border: 1px solid transparent;
+}
+
+#stylesview .ui-iconview-entry:not(.selected):hover {
+	border: 1px solid var(--color-border-dark);
+	-webkit-box-shadow: 0 0 2px 0 var(--color-background-darker);
+	box-shadow: 0 0 2px 0 var(--color-background-darker);
+	cursor: pointer;
+	background-color: transparent;
+}
+
+/* Insert Tab */
+
+/* Layout Tab */
+
+/* References Tab */
+
+/* Format Tab */
+
+/* Table Tab */
+
+/* Review Tab */
+
+/* Help tab */
+
+/* File tab */
+
+/* Draw tab */
+
+
+/* Calc */
+
+/* Home tab */
+
+#numbertype select {
+	flex: 1 0;
+}
+
+/* Review Tab */
+
+/* Sheet Tab */
+
+/* Data Tab */
+
+
+/* Impress */
+
+/* Home Tab */
+
+/* Insert Tab */
+
+#table-Insert #HeaderAndFooter.notebookbar {
+	min-width: 160px;
+}
+
+/* Review Tab */
+
+
+/* Table Tab */
+
+/* Draw Tab */
+
+/* other */
+
+.ui-drawing-area-container {
+	position: relative;
+}
+
+.ui-drawing-area-loader {
+	border: 5px solid var(--color-border-lighter);
+	border-top: 5px solid var(--color-border);
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	animation: spin 2s linear infinite;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	top: 25%;
+}
+
+.ui-drawing-area-loader-container {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.ui-drawing-area-placeholder-container {
+	position: absolute;
+	overflow: hidden;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.ui-drawing-area-placeholder {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	width: 100%;
+	text-align: center;
+}
+
+#style1 img ~ .ui-drawing-area-placeholder-container .ui-drawing-area-placeholder {
+	font-family: Liberation Serif;
+	font-size: var(--default-font-size);
+}
+
+#style2 img ~ .ui-drawing-area-placeholder-container .ui-drawing-area-placeholder {
+	font-family: Liberation Serif;
+	font-size: var(--default-font-size);
+}
+
+#style3 img ~ .ui-drawing-area-placeholder-container .ui-drawing-area-placeholder {
+	font-family: Liberation Sans;
+	font-size: calc(var(--default-font-size)*2);
+	font-weight: bold;
+}
+
+#style4 img ~ .ui-drawing-area-placeholder-container .ui-drawing-area-placeholder {
+	font-family: Liberation Sans;
+	font-size: calc(var(--default-font-size)*1.5);
+}
+
+[class*='as-odt-submenu-icon'] {
+	background: url('images/lc_downloadas-odt.svg') center;
+}
+
+[class*='as-ods-submenu-icon'] {
+	background: url('images/lc_downloadas-ods.svg') center;
+}
+
+[class*='as-odp-submenu-icon'] {
+	background: url('images/lc_downloadas-odp.svg') center;
+}
+
+[class*='as-odg-submenu-icon'] {
+	background: url('images/lc_downloadas-odg.svg') center;
+}
+
+[class*='as-png-submenu-icon'] {
+	background: url('images/lc_insertgraphic.svg') center;
+}
+
+[class*='as-bmp-submenu-icon'] {
+	background: url('images/lc_insertgraphic.svg') center;
+}
+
+[class*='as-gif-submenu-icon'] {
+	background: url('images/lc_insertgraphic.svg') center;
+}
+
+[class*='as-tiff-submenu-icon'] {
+	background: url('images/lc_insertgraphic.svg') center;
+}
+
+[class*='as-swf-submenu-icon'] {
+	background: url('images/lc_exportswf.svg') center;
+}
+
+[class*='as-svg-submenu-icon'] {
+	background: url('images/lc_exportsvg.svg') center;
+}
+
+[class*='as-rtf-submenu-icon'] {
+	background: url('images/lc_downloadas-rtf.svg') center;
+}
+
+[class*='as-doc-submenu-icon'] {
+	background: url('images/lc_downloadas-doc.svg') center;
+}
+
+[class*='as-docx-submenu-icon'] {
+	background: url('images/lc_downloadas-docx.svg') center;
+}
+
+[class*='pdf-submenu-icon'] {
+	background: url('images/lc_exportpdf.svg') center;
+}
+
+[class*='epub-submenu-icon'] {
+	background: url('images/lc_exportepub.svg') center;
+}
+
+[class*='as-xls-submenu-icon'] {
+	background: url('images/lc_downloadas-xls.svg') center;
+}
+
+[class*='as-xlsx-submenu-icon'] {
+	background: url('images/lc_downloadas-xlsx.svg') center;
+}
+
+[class*='as-csv-submenu-icon'] {
+	background: url('images/lc_downloadas-csv.svg') center;
+}
+
+[class*='as-ppt-submenu-icon'] {
+	background: url('images/lc_downloadas-ppt.svg') center;
+}
+
+[class*='as-pptx-submenu-icon'] {
+	background: url('images/lc_downloadas-pptx.svg') center;
+}
+
+[class*='as-html-submenu-icon'] {
+	background: url('images/lc_downloadas-html.svg') center;
+}
