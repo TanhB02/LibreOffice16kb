@@ -1,4 +1,4 @@
-package org.libreoffice.androidapp.ui
+package org.libreoffice.androidlib.utils
 
 import android.app.Activity
 import android.content.ComponentName

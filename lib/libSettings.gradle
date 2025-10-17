@@ -1,0 +1,10 @@
+ext {
+    liboAppName         = 'Collabora Online Development Edition'
+    liboVersionMajor    = '25'
+    liboVersionMinor    = '25'
+    liboOVersionHash    = '7d524a9f8d'
+    liboCoreVersionHash = 'e78d989cd004'
+    liboApplicationId   = 'org.libreoffice.androidapp'
+    liboBrandingDir     = ''
+    liboGooglePlay      = 'false'
+}

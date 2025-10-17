@@ -1,0 +1,17 @@
+ext {
+    liboAppName         = 'TanhX LibreOffice'
+    liboVendor          = 'Collabora'
+    liboInfoURL         = 'https://collaboraonline.github.io'
+    liboLauncherIcon    = '@mipmap/ic_launcher'
+    liboHasBranding     = 'false'
+    liboBrandingDir     = ''
+    liboOVersionHash    = 'dev'
+    liboCoreVersionHash = 'dev'
+}
+android.defaultConfig {
+    applicationId 'com.tanhx.liboapp'
+    versionCode 1
+    versionName '0.1'
+}
+
+

@@ -1,0 +1,109 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply from: 'appSettings.gradle'
+
+android {
+    namespace 'org.libreoffice.androidapp'
+    compileSdkVersion 36
+    buildDir = "${rootProject.getBuildDir()}/app"
+    ndkVersion "26.1.10909125"
+
+    defaultConfig {
+        minSdkVersion 26
+        targetSdkVersion 36
+
+        resValue "string", "app_name", "${liboAppName}"
+        resValue "string", "vendor", "${liboVendor}"
+        resValue "string", "info_url", "${liboInfoURL}"
+        resValue "string", "online_version_hash", "${liboOVersionHash}"
+        resValue "string", "core_version_hash", "${liboCoreVersionHash}"
+        resValue "string", "image_draw_header", "@drawable/drawer_header"
+        manifestPlaceholders = [ appIcon: "${liboLauncherIcon}" ]
+        buildConfigField "boolean", "APP_HAS_BRANDING", "${liboHasBranding}"
+    }
+    splits {
+        abi {
+            enable true
+
+            reset ()
+            include 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+        }
+    }
+
+    lint {
+        disable 'MissingTranslation', 'ExtraTranslation'
+    }
+
+    buildTypes {
+        debug {
+            resValue "string", "app_name", "${liboAppName} Debug"
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+            debuggable true
+        }
+        release {
+            if (file("src/main/res/drawable/drawer_header_brand.png").exists()) {
+                resValue "string", "image_draw_header", "@drawable/drawer_header_brand"
+            }
+
+            minifyEnabled false // FIXME disabled before we get a good proguardRules for callFakeWebsocketOnMessage calling from C++
+            shrinkResources false // FIXME cannot be enabled when minifyEnabled is turned off
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+        buildConfig = true
+        aidl = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs += ["-Xjvm-default=all"]
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.core:core:1.17.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+    implementation project(path: ':lib')
+
+    // https://stackoverflow.com/questions/75263047/duplicate-class-in-kotlin-android
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+        }
+    }
+}
+
+tasks.register('copyBrandFiles', Copy) {
+    from "${liboBrandingDir}/android"
+    into "src/main/res"
+}
+
+afterEvaluate {
+    if (!project.ext.liboHasBranding.equals("true") || !file("${liboBrandingDir}").exists()) {
+        copyBrandFiles.enabled = false
+    }
+
+    preBuild.dependsOn copyBrandFiles
+}
+
+
